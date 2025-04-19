@@ -29,11 +29,13 @@ class Message(BaseModel):
 
 class InferenceRequest(BaseModel):
     model: Model
+    adapter: Optional[str] = None
     messages: List[Message]
     parameters: Optional[GenerationParameters] = GenerationParameters()
     container_name: str
 
 class InferenceRequestContainerized(BaseModel):
     model: Model
+    adapter: Optional[str] = None
     messages: List[Message]
     parameters: Optional[GenerationParameters] = GenerationParameters()

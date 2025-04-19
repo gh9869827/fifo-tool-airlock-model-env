@@ -37,26 +37,28 @@ This projects currently focuses on Phi4 models: they are lightweight, can be run
 
 ```
 airlock_model_env/
-├── server/            # Container-side FastAPI server that provides the Airlocked model server logic (runs inside Docker)
-│   ├── fastapi_server.py
-│   ├── llm_model.py
-│   ├── llm_model_phi_4.py
-│   ├── llm_model_phi_4_mini_instruct.py
-│   ├── llm_model_phi_4_multimodal_instruct.py
-│   └── __init__.py
-├── client/            # CLI entrypoint executed via `docker exec`, sends requests via stdin/stdout
+├── server/                                      # Container-side FastAPI server that provides the Airlocked model server logic (runs inside Docker)
+│   ├── __init__.py
+│   ├── fastapi_server.py                        # Entry point that launches the FastAPI app
+│   ├── logging_config.py                        # Uvicorn-style logging configuration setup
+│   ├── llm_model.py                             # Abstract base class for LLM models
+│   ├── llm_model_phi_4_base.py                  # Shared logic for Phi-4 model family
+│   ├── llm_model_phi_4_base_with_adapters.py    # Base class that supports LoRA adapter loading/switching
+│   ├── llm_model_phi_4_mini_instruct.py         # Adapter-driven Phi-4 Mini Instruct model loader
+│   ├── llm_model_phi_4_multimodal_instruct.py   # Adapter-enabled Phi-4 Multimodal model loader
+├── client/                                      # CLI entrypoint executed via `docker exec`, sends requests via stdin/stdout
 │   ├── run.py
 │   └── __init__.py
-├── bridge/            # Host-side FastAPI bridge server, proxies requests to Docker-contained model
+├── bridge/                                      # Host-side FastAPI bridge server, proxies requests to Docker-contained model
 │   ├── fastapi_server.py
 │   └── __init__.py
-├── sdk/               # Client SDK to talk to the FastAPI bridge
+├── sdk/                                         # Client SDK to talk to the FastAPI bridge
 │   ├── client_sdk.py
 │   └── __init__.py
-├── common/            # Shared request/response schemas and data models
+├── common/                                      # Shared request/response schemas and data models
 │   ├── models.py
 │   └── __init__.py
-└── README.md          # You're here!
+└── README.md                                    # You're here!
 ```
 
 ---
@@ -142,8 +144,20 @@ uvicorn bridge.fastapi_server:app --host 127.0.0.1 --port 8000
 
 ```python
 from sdk.client_sdk import call_airlock_model_server
-response = call_airlock_model_server("What is the capital of France?")
-print(response)
+
+answer = call_airlock_model_server(
+    model=Model.Phi4MiniInstruct,
+    adapter="mini-date-dsl",
+    messages=[{"role": "system", "content": "You are a precise temporal parser. [...] Only return the code."},
+              {"role": "user", "content": "in 2 weeks"}],
+    parameters=GenerationParameters(
+        max_new_tokens=1024,
+        do_sample=False
+    ),
+    container_name="dev-phi"
+)
+
+print(answer)
 ```
 
 ---

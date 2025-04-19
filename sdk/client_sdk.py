@@ -4,9 +4,10 @@ from typing import List, Optional
 import requests
 from ..common.models import InferenceRequest, GenerationParameters, Model
 
-def call_airlock_model_server(model: Model,
+def call_airlock_model_server(container_name: str,
+                              model: Model,
                               messages: List[Message],
-                              container_name: str,
+                              adapter: Optional[None] = None,
                               parameters: Optional[GenerationParameters] = None,
                               host: str = "http://127.0.0.1:8000") -> str:
     """
@@ -14,6 +15,7 @@ def call_airlock_model_server(model: Model,
     """
     req = InferenceRequest(
         model=model,
+        adapter=adapter,
         messages=messages,
         container_name=container_name,
         parameters=parameters or GenerationParameters()

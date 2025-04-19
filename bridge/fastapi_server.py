@@ -51,6 +51,7 @@ async def generate(request: InferenceRequest):
             container_name=request.container_name,
             request=InferenceRequestContainerized(
                 model=request.model,
+                adapter=request.adapter,
                 messages=request.messages,
                 parameters=request.parameters
             )

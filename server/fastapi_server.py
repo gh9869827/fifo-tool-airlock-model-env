@@ -1,8 +1,11 @@
+from .logging_config import configure_logging
 
-import logging
+configure_logging()
+
 from fastapi import FastAPI, Response
 import uvicorn
 import torch
+import logging
 from dataclasses import dataclass
 from typing import Optional, Union
 from contextlib import asynccontextmanager
@@ -13,7 +16,6 @@ from common.models import InferenceRequestContainerized
 # uncomment to enable repeatability
 torch.random.manual_seed(0)
 
-logger = logging.getLogger("uvicorn")
 
 @dataclass
 class LoadedModels:
@@ -37,19 +39,29 @@ models = LoadedModels()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    logger.info("🚀 Starting up: loading models...")
+    logging.info("🚀 Starting up: loading models...")
 
-    logger.info("📦 Loading 'phi-4-mini-instruct' model")
-    models.phi4MiniInstruct = LLMModelPhi4MiniInstruct()
+    logging.info("📦 Loading 'phi-4-mini-instruct' model")
+    models.phi4MiniInstruct = LLMModelPhi4MiniInstruct(
+        model_path="microsoft/Phi-4-mini-instruct",
+        adapter_map={
+            "mini-date-dsl": "/home/fifodev/tmp/checkpoint_dir"
+        },
+        max_concurrent_per_adapter=1
+    )
     models.phi4MiniInstruct.load_model()
 
-    logger.info("📦 Loading 'phi-4-multimodal-instruct' model")
-    models.phi4MultimodalInstruct = LLMModelPhi4MultimodalInstruct()
+    logging.info("📦 Loading 'phi-4-multimodal-instruct' model")
+    models.phi4MultimodalInstruct = LLMModelPhi4MultimodalInstruct(
+        model_path="microsoft/Phi-4-multimodal-instruct",
+        adapter_map={},
+        max_concurrent_per_adapter=1
+    )
     models.phi4MultimodalInstruct.load_model()
 
-    logger.info("✅ All models loaded successfully")
+    logging.info("✅ All models loaded successfully")
     yield
-    logger.info("🛑 Shutting down gracefully")
+    logging.info("🛑 Shutting down gracefully")
 
 app = FastAPI(lifespan=lifespan)
 
@@ -63,7 +75,11 @@ async def generate(request: InferenceRequestContainerized):
                 content=f"Unrecognized model '{request.model}'"
             )
 
-        output = model.generate(request)
+        try:
+            output = model.generate(request)
+        except Exception as e:
+            print(e)
+            raise e
 
         return Response(content=output, media_type="text/plain")
 

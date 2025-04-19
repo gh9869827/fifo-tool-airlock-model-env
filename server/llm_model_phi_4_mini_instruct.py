@@ -1,68 +1,42 @@
-import time
-
 from transformers import (
-    AutoModelForCausalLM,
     AutoTokenizer
 )
-from .llm_model_phi_4 import LLMModelPhi4
-from common.models import InferenceRequestContainerized
-from typing import Dict
+from .llm_model_phi_4_base_with_adapters import LLMModelPhi4WithAdapters
 
-from transformers import AutoTokenizer, AutoModelForCausalLM
-from peft import PeftModel
-import time
-from typing import Dict
 
-class LLMModelPhi4MiniInstruct(LLMModelPhi4):
-    def __init__(self):
-        self._model_path: str = "microsoft/Phi-4-mini-instruct"  # base model
-        self._adapter_path: str = "/home/fifodev/tmp/checkpoint_dir"       # your LoRA weights
-        self._model = None
-        self._tokenizer = None
-        self._generation_args: Dict = {}
+class LLMModelPhi4MiniInstruct(LLMModelPhi4WithAdapters):
+    """
+    Wrapper for Phi-4-mini-instruct models using text-only input.
+    """
 
     def load_model(self) -> None:
-        # 1. Load the base model
-        base_model = AutoModelForCausalLM.from_pretrained(
-            self._model_path,
-            device_map="auto",
-            torch_dtype="auto",
-            trust_remote_code=True,
-        )
+        """
+        Load the tokenizer and model using AutoTokenizer.
+        """
+        self._load_common_model(AutoTokenizer.from_pretrained, use_cuda=True)
 
-        # 2. Load your fine-tuned LoRA weights
-        self._model = PeftModel.from_pretrained(base_model, self._adapter_path)
+    def _tokenize_input(self, prompt: str):
+        """
+        Tokenize the given prompt string into input tensor format for the model.
 
-        # 3. Load tokenizer — from the adapter dir in case it's been updated
-        self._tokenizer = AutoTokenizer.from_pretrained(self._adapter_path, trust_remote_code=True)
+        Args:
+            prompt (str):
+                The prompt string to tokenize.
 
-        # 4. Generation defaults
-        self._generation_args = {
-            "max_new_tokens": 500,
-            "temperature": 0.0,
-            "do_sample": False,
-        }
+        Returns:
+            dict: A dictionary of tensors suitable for input into the model.
+        """
+        return self._tokenizer_or_processor(prompt, return_tensors="pt").to(self._model.device)
 
-    def generate(self, request: InferenceRequestContainerized) -> str:
-        if self._model is None or self._tokenizer is None:
-            raise RuntimeError("Model must be loaded before calling generate()")
+    def _decode_output(self, tokens) -> str:
+        """
+        Decode the generated tokens back into a human-readable string.
 
-        prompt = self._build_prompt(request.messages)
-        inputs = self._tokenizer(prompt, return_tensors="pt").to(self._model.device)
-        input_token_count = inputs["input_ids"].shape[1]
+        Args:
+            tokens:
+                The token sequence output by the model.
 
-        allowed_keys = set(self._model.generation_config.to_dict().keys())
-        filtered_params = self._filter_generation_args(request.parameters, allowed_keys)
-        generation_args = {**self._generation_args, **filtered_params}
-
-        start = time.perf_counter()
-        outputs = self._model.generate(**inputs, **generation_args)
-        duration = time.perf_counter() - start
-
-        generated_ids = outputs[0][input_token_count:]
-        output_token_count = generated_ids.shape[0]
-
-        response = self._tokenizer.decode(generated_ids, skip_special_tokens=True)
-
-        self._print_token_stats(input_token_count, output_token_count, duration)
-        return response
+        Returns:
+            str: A string representing the decoded model response.
+        """
+        return self._tokenizer_or_processor.decode(tokens[0], skip_special_tokens=True)
