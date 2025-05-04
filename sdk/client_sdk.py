@@ -1,14 +1,12 @@
 from __future__ import annotations
-from mailbox import Message
-from typing import List, Optional
 import requests
-from ..common.models import InferenceRequest, GenerationParameters, Model
+from ..common.models import InferenceRequest, GenerationParameters, Model, Message
 
 def call_airlock_model_server(container_name: str,
                               model: Model,
-                              messages: List[Message],
-                              adapter: Optional[None] = None,
-                              parameters: Optional[GenerationParameters] = None,
+                              messages: list[Message],
+                              adapter: str | None = None,
+                              parameters: GenerationParameters | None = None,
                               host: str = "http://127.0.0.1:8000") -> str:
     """
     Sends messages to the FastAPI inference server and returns the generated response.

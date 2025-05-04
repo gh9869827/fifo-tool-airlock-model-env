@@ -7,7 +7,6 @@ import uvicorn
 import torch
 import logging
 from dataclasses import dataclass
-from typing import Optional, Union
 from contextlib import asynccontextmanager
 from .llm_model_phi_4_mini_instruct import LLMModelPhi4MiniInstruct
 from .llm_model_phi_4_multimodal_instruct import LLMModelPhi4MultimodalInstruct
@@ -20,11 +19,12 @@ torch.random.manual_seed(0)
 @dataclass
 class LoadedModels:
 
-    phi4MiniInstruct: Optional[LLMModelPhi4MiniInstruct] = None
-    phi4MultimodalInstruct: Optional[LLMModelPhi4MultimodalInstruct] = None
+    phi4MiniInstruct: LLMModelPhi4MiniInstruct | None = None
+    phi4MultimodalInstruct: LLMModelPhi4MultimodalInstruct | None = None
 
-    def get_model(self, name: str) -> Optional[Union[LLMModelPhi4MiniInstruct,
-                                                     LLMModelPhi4MultimodalInstruct]]:
+    def get_model(self, name: str) -> (LLMModelPhi4MiniInstruct
+                                      | LLMModelPhi4MultimodalInstruct
+                                      | None):
         if name == "Phi4MiniInstruct":
             return self.phi4MiniInstruct
 

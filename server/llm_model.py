@@ -1,6 +1,4 @@
-
 from abc import ABC, abstractmethod
-from typing import Optional
 from common.models import InferenceRequestContainerized
 
 class LLMModel(ABC):
@@ -24,7 +22,7 @@ class LLMModel(ABC):
 
     def _print_token_stats(self,
                            model_name: str,
-                           adapter_name: Optional[str],
+                           adapter_name: str | None,
                            input_tokens: int,
                            output_tokens: int,
                            duration: float):
@@ -35,7 +33,7 @@ class LLMModel(ABC):
             model_name (str):
                 Name of the model
 
-            adapter_name (Optional[str]):
+            adapter_name (str | None):
                 Optional adapter name
 
             input_tokens (int):
@@ -48,4 +46,5 @@ class LLMModel(ABC):
                 Time in seconds taken to generate the response.
         """
         adapter = "[base model]" if adapter_name is None else f"[{adapter_name}]"
-        print(f"📥 {input_tokens:>4} tokens in   ➜   📤 {output_tokens:>4} tokens out   ⏱️ {duration:.2f}s    📦 {model_name}{adapter}")
+        print(f"📥 {input_tokens:>4} tokens in   ➜   📤 {output_tokens:>4} "
+              f"tokens out   ⏱️ {duration:.2f}s    📦 {model_name}{adapter}")

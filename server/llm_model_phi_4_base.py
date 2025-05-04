@@ -1,7 +1,6 @@
 from abc import abstractmethod
 import logging
 import threading
-from typing import List, Dict, Optional
 from transformers import GenerationConfig, PreTrainedModel, PreTrainedTokenizer
 from .llm_model import LLMModel
 from common.models import GenerationParameters, Message
@@ -15,13 +14,13 @@ class LLMModelPhi4Base(LLMModel):
     tokenization, decoding, adapter switching, and concurrency controls.
 
     Attributes:
-        _model_path (Optional[str]):
+        _model_path (str | None):
             Path to the model or HF hub ID
 
-        _adapter_map (Dict[str, str]):
+        _adapter_map (dict[str, str]):
             Dictionary mapping adapter names to their local paths or HF repo locations
 
-        _semaphores (Dict[str, threading.Semaphore]):
+        _semaphores (dict[str, threading.Semaphore]):
             Dictionary of semaphores (one per adapter) to limit concurrent access
 
         _lock (threading.Lock):
@@ -30,24 +29,24 @@ class LLMModelPhi4Base(LLMModel):
         _active_adapter (str):
             Name of the currently selected adapter
 
-        _model (Optional[PreTrainedModel]):
+        _model (PreTrainedModel | None):
             The actual loaded model instance (base or PEFT-wrapped)
 
-        _tokenizer_or_processor (Optional[PreTrainedTokenizer]):
+        _tokenizer_or_processor (PreTrainedTokenizer | None):
             Tokenizer or processor object, used to encode/decode messages
 
-        _generation_config (Optional[GenerationConfig]):
+        _generation_config (GenerationConfig | None):
             Default generation configuration to use unless overridden by a request
     """
 
-    _model_path: Optional[str]
-    _adapter_map: Dict[str, str]
-    _semaphores: Dict[str, threading.Semaphore]
+    _model_path: str | None
+    _adapter_map: dict[str, str]
+    _semaphores: dict[str, threading.Semaphore]
     _lock: threading.Lock
     _active_adapter: str
-    _model: Optional[PreTrainedModel]
-    _tokenizer_or_processor: Optional[PreTrainedTokenizer]
-    _generation_config: Optional[GenerationConfig]
+    _model: PreTrainedModel | None
+    _tokenizer_or_processor: PreTrainedTokenizer | None
+    _generation_config: GenerationConfig | None
 
     def __init__(self):
         """
@@ -62,12 +61,12 @@ class LLMModelPhi4Base(LLMModel):
         self._tokenizer_or_processor = None
         self._generation_config = None
 
-    def _build_prompt(self, messages: List[Message]) -> str:
+    def _build_prompt(self, messages: list[Message]) -> str:
         """
         Construct a prompt string from a list of structured messages.
 
         Args:
-            messages (List[Message]):
+            messages (list[Message]):
                 A list of Message objects containing role and content fields.
 
         Returns:
@@ -129,12 +128,12 @@ class LLMModelPhi4Base(LLMModel):
         """
         raise NotImplementedError("Subclasses must implement this method.")
 
-    def _set_adapter(self, adapter_name: Optional[str]) -> None:
+    def _set_adapter(self, adapter_name: str | None) -> None:
         """
         Set the active adapter for inference, switching context as needed.
 
         Args:
-            adapter_name (Optional[str]):
+            adapter_name (str | None):
                 The name of the adapter to activate, or None to disable all adapters 
                 and use the base model.
 

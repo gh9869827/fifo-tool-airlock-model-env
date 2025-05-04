@@ -1,7 +1,7 @@
 import threading
 import logging
 import time
-from typing import Dict, Callable
+from typing import Callable
 from common.models import InferenceRequestContainerized
 from peft import LoraConfig, get_peft_model
 from transformers import (
@@ -20,20 +20,20 @@ class LLMModelPhi4WithAdapters(LLMModelPhi4Base):
         _model_path (str):
             Path to the base model.
 
-        _adapter_map (Dict[str, str]):
+        _adapter_map (dict[str, str]):
             Dictionary mapping adapter names to their local paths or HF repo locations.
 
-        _semaphores (Dict[str, threading.Semaphore]):
+        _semaphores (dict[str, threading.Semaphore]):
             Semaphore used to control concurrent access per adapter.
     """
 
     _model_path: str
-    _adapter_map: Dict[str, str]
-    _semaphores: Dict[str, threading.Semaphore]
+    _adapter_map: dict[str, str]
+    _semaphores: dict[str, threading.Semaphore]
 
     def __init__(self,
                  model_path: str,
-                 adapter_map: Dict[str, str],
+                 adapter_map: dict[str, str],
                  max_concurrent_per_adapter: int = 2):
         """
         Initialize the Phi-4 model with optional LoRA adapters.
@@ -42,7 +42,7 @@ class LLMModelPhi4WithAdapters(LLMModelPhi4Base):
             model_path (str):
                 Path to the base model (e.g., Hugging Face model ID).
 
-            adapter_map (Dict[str, str]):
+            adapter_map (dict[str, str]):
                 Mapping of adapter names to adapter paths.
 
             max_concurrent_per_adapter (int):

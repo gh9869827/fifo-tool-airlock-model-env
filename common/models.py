@@ -1,5 +1,4 @@
 from pydantic import BaseModel
-from typing import List, Optional
 from enum import Enum
 
 
@@ -14,14 +13,14 @@ class Model(str, Enum):
     Phi4MultimodalInstruct = "Phi4MultimodalInstruct"
 
 class GenerationParameters(BaseModel):
-    temperature: Optional[float] = None
-    top_k: Optional[int] = None
-    top_p: Optional[float] = None
-    do_sample: Optional[bool] = None
-    max_new_tokens: Optional[int] = None
-    repetition_penalty: Optional[float] = None
-    presence_penalty: Optional[float] = None
-    frequency_penalty: Optional[float] = None
+    temperature: float | None = None
+    top_k: int | None = None
+    top_p: float | None = None
+    do_sample: bool | None = None
+    max_new_tokens: int | None = None
+    repetition_penalty: float | None = None
+    presence_penalty: float | None = None
+    frequency_penalty: float | None = None
 
 class Message(BaseModel):
     role: Role
@@ -29,13 +28,13 @@ class Message(BaseModel):
 
 class InferenceRequest(BaseModel):
     model: Model
-    adapter: Optional[str] = None
-    messages: List[Message]
-    parameters: Optional[GenerationParameters] = GenerationParameters()
+    adapter: str | None = None
+    messages: list[Message]
+    parameters: GenerationParameters | None = GenerationParameters()
     container_name: str
 
 class InferenceRequestContainerized(BaseModel):
     model: Model
-    adapter: Optional[str] = None
-    messages: List[Message]
-    parameters: Optional[GenerationParameters] = GenerationParameters()
+    adapter: str | None = None
+    messages: list[Message]
+    parameters: GenerationParameters | None = GenerationParameters()
