@@ -35,6 +35,7 @@ def call_model(container_name: str, request: InferenceRequestContainerized) -> s
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True,
+            encoding="utf-8",
             check=True
         )
 
