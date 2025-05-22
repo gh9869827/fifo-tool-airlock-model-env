@@ -1,0 +1,36 @@
+[project]
+name = "fifo-tool-airlock-model-env"
+version = "0.1.0"
+description = "Isolated runtime for Hugging Face models requiring `trust_remote_code=True`, using no-network Docker and a FastAPI bridge"
+authors = [
+  { name = "Florent Gastoud" }
+]
+license = { file = "LICENSE" }
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = [
+  "pydantic",
+  "fastapi",
+  "uvicorn"
+]
+
+[project.optional-dependencies]
+server = [
+  "transformers",
+  "accelerate",
+  "bitsandbytes",
+  "peft",
+  "flash-attn"
+]
+sdk = [
+  "backoff"
+]
+# Optional: add extras for fine-tuning
+fine-tuning = [
+  "trl",
+  "datasets"
+]
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
