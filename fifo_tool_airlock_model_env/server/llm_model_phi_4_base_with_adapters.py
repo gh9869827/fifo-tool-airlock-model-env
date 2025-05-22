@@ -2,13 +2,13 @@ import threading
 import logging
 import time
 from typing import Callable
-from common.models import InferenceRequestContainerized
 from peft import LoraConfig, get_peft_model
 from transformers import (
     GenerationConfig,
     AutoModelForCausalLM
 )
-from .llm_model_phi_4_base import LLMModelPhi4Base
+from fifo_tool_airlock_model_env.common.models import InferenceRequestContainerized
+from fifo_tool_airlock_model_env.server.llm_model_phi_4_base import LLMModelPhi4Base
 
 logger = logging.getLogger(__name__)
 

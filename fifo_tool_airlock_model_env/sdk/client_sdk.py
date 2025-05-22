@@ -1,6 +1,11 @@
 from __future__ import annotations
 import requests
-from ..common.models import InferenceRequest, GenerationParameters, Model, Message
+from fifo_tool_airlock_model_env.common.models import (
+    InferenceRequest,
+    GenerationParameters,
+    Model,
+    Message
+)
 
 def call_airlock_model_server(container_name: str,
                               model: Model,

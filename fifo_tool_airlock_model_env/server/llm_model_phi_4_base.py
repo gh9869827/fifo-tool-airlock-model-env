@@ -2,8 +2,8 @@ from abc import abstractmethod
 import logging
 import threading
 from transformers import GenerationConfig, PreTrainedModel, PreTrainedTokenizer
-from .llm_model import LLMModel
-from common.models import GenerationParameters, Message
+from fifo_tool_airlock_model_env.common.models import GenerationParameters, Message
+from fifo_tool_airlock_model_env.server.llm_model import LLMModel
 
 logger = logging.getLogger(__name__)
 

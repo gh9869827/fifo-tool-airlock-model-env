@@ -1,7 +1,9 @@
 from transformers import (
     AutoTokenizer
 )
-from .llm_model_phi_4_base_with_adapters import LLMModelPhi4WithAdapters
+from fifo_tool_airlock_model_env.server.llm_model_phi_4_base_with_adapters import (
+    LLMModelPhi4WithAdapters
+)
 
 
 class LLMModelPhi4MiniInstruct(LLMModelPhi4WithAdapters):

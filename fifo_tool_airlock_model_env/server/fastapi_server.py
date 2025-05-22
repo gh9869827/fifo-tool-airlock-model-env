@@ -8,9 +8,15 @@ import torch
 import logging
 from dataclasses import dataclass
 from contextlib import asynccontextmanager
-from .llm_model_phi_4_mini_instruct import LLMModelPhi4MiniInstruct
-from .llm_model_phi_4_multimodal_instruct import LLMModelPhi4MultimodalInstruct
-from common.models import InferenceRequestContainerized
+from fifo_tool_airlock_model_env.server.llm_model_phi_4_mini_instruct import (
+    LLMModelPhi4MiniInstruct
+)
+from fifo_tool_airlock_model_env.server.llm_model_phi_4_multimodal_instruct import (
+    LLMModelPhi4MultimodalInstruct
+)
+from fifo_tool_airlock_model_env.common.models import (
+    InferenceRequestContainerized
+)
 
 # uncomment to enable repeatability
 torch.random.manual_seed(0)

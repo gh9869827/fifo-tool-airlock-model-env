@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from common.models import InferenceRequestContainerized
+from fifo_tool_airlock_model_env.common.models import InferenceRequestContainerized
 
 class LLMModel(ABC):
     """

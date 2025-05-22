@@ -1,7 +1,10 @@
 import subprocess
 from fastapi import FastAPI, Response
 import uvicorn
-from common.models import InferenceRequest, InferenceRequestContainerized
+from fifo_tool_airlock_model_env.common.models import (
+    InferenceRequest,
+    InferenceRequestContainerized
+)
 
 app = FastAPI()
 
@@ -30,7 +33,7 @@ def call_model(container_name: str, request: InferenceRequestContainerized) -> s
 
         result = subprocess.run(
             ["docker", "exec", "-i", container_name, 
-             "python3", "-m", "airlock_model_env.client.run"],
+             "python3", "-m", "fifo_tool_airlock_model_env.client.run"],
             input=request.model_dump_json(),
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
