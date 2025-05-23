@@ -1,0 +1,13 @@
+{
+  "models": [
+    {
+      "name": "phi4MiniInstruct",
+      "class_name": "LLMModelPhi4MiniInstruct",
+      "model_path": "microsoft/Phi-4-mini-instruct",
+      "adapter_map": {
+        "adapter-name": "/path/to/adapter/saved_model"
+      },
+      "max_concurrent_per_adapter": 1
+    }
+  ]
+}

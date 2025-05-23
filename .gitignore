@@ -172,3 +172,6 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# Local model configuration (contains paths, adapter info, etc.)
+model_config.json

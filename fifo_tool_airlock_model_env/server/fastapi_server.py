@@ -7,11 +7,8 @@ import uvicorn
 # import torch
 import logging
 from contextlib import asynccontextmanager
-from fifo_tool_airlock_model_env.server.llm_model_phi_4_mini_instruct import (
-    LLMModelPhi4MiniInstruct
-)
-from fifo_tool_airlock_model_env.server.llm_model_phi_4_multimodal_instruct import (
-    LLMModelPhi4MultimodalInstruct
+from fifo_tool_airlock_model_env.server.llm_model_loader import (
+    LoadedModels
 )
 from fifo_tool_airlock_model_env.common.models import (
     InferenceRequestContainerized
@@ -22,31 +19,19 @@ from fifo_tool_airlock_model_env.common.models import (
 
 models = LoadedModels()
 
-
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(_app: FastAPI):
     logging.info("🚀 Starting up: loading models...")
 
-    logging.info("📦 Loading 'phi-4-mini-instruct' model")
-    models.phi4MiniInstruct = LLMModelPhi4MiniInstruct(
-        model_path="microsoft/Phi-4-mini-instruct",
-        adapter_map={
-            "mini-date-dsl": "/home/fifodev/tmp/checkpoint_dir"
-        },
-        max_concurrent_per_adapter=1
-    )
-    models.phi4MiniInstruct.load_model()
+    try:
+        models.load_from_config("model_config.json")
+        logging.info("✅ All models loaded successfully")
+    except Exception as e:
+        logging.error("❌ Failed to load models: %s", e)
+        raise
 
-    logging.info("📦 Loading 'phi-4-multimodal-instruct' model")
-    models.phi4MultimodalInstruct = LLMModelPhi4MultimodalInstruct(
-        model_path="microsoft/Phi-4-multimodal-instruct",
-        adapter_map={},
-        max_concurrent_per_adapter=1
-    )
-    models.phi4MultimodalInstruct.load_model()
-
-    logging.info("✅ All models loaded successfully")
     yield
+
     logging.info("🛑 Shutting down gracefully")
 
 app = FastAPI(lifespan=lifespan)
