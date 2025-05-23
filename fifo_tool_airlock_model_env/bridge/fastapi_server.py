@@ -32,7 +32,7 @@ def call_model(container_name: str, request: InferenceRequestContainerized) -> s
     try:
 
         result = subprocess.run(
-            ["docker", "exec", "-i", container_name, 
+            ["docker", "exec", "-i", container_name,
              "python3", "-m", "fifo_tool_airlock_model_env.client.run"],
             input=request.model_dump_json(),
             stdout=subprocess.PIPE,
@@ -72,7 +72,7 @@ async def generate(request: InferenceRequest):
         )
 
 if __name__ == "__main__":
-    uvicorn.run("fastapi_server:app", host="127.0.0.1", port=8000, log_level="info")
-
-# airlock_model_env>uvicorn bridge.fastapi_server:app --host 127.0.0.1 --port 8000
-# pip install uvicorn fastapi
+    uvicorn.run("fifo_tool_airlock_model_env.bridge.fastapi_server:app",
+                host="127.0.0.1",
+                port=8000,
+                log_level="info")
