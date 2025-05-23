@@ -4,9 +4,8 @@ configure_logging()
 
 from fastapi import FastAPI, Response
 import uvicorn
-import torch
+# import torch
 import logging
-from dataclasses import dataclass
 from contextlib import asynccontextmanager
 from fifo_tool_airlock_model_env.server.llm_model_phi_4_mini_instruct import (
     LLMModelPhi4MiniInstruct
@@ -19,26 +18,7 @@ from fifo_tool_airlock_model_env.common.models import (
 )
 
 # uncomment to enable repeatability
-torch.random.manual_seed(0)
-
-
-@dataclass
-class LoadedModels:
-
-    phi4MiniInstruct: LLMModelPhi4MiniInstruct | None = None
-    phi4MultimodalInstruct: LLMModelPhi4MultimodalInstruct | None = None
-
-    def get_model(self, name: str) -> (LLMModelPhi4MiniInstruct
-                                      | LLMModelPhi4MultimodalInstruct
-                                      | None):
-        if name == "Phi4MiniInstruct":
-            return self.phi4MiniInstruct
-
-        if name == "Phi4MultimodalInstruct":
-            return self.phi4MultimodalInstruct
-
-        return None
-
+# torch.random.manual_seed(0)
 
 models = LoadedModels()
 
