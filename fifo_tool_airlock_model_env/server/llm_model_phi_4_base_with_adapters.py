@@ -73,7 +73,11 @@ class LLMModelPhi4WithAdapters(LLMModelPhi4Base):
             use_cuda (bool):
                 Whether to move the model to CUDA.
         """
-        self._tokenizer_or_processor = loader_fn(self._model_path, trust_remote_code=True)
+        self._tokenizer_or_processor = loader_fn(
+            self._model_path,
+            trust_remote_code=True,
+            local_files_only=True
+        )
 
         base_model = AutoModelForCausalLM.from_pretrained(
             self._model_path,
