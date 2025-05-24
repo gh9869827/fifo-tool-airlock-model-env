@@ -10,18 +10,26 @@ app = FastAPI()
 
 def call_model(container_name: str, request: InferenceRequestContainerized) -> str:
     """
-    Calls an isolated, containerized model with the given messages and generation parameters.
+    Calls an isolated, containerized model with the given messages, images, and generation
+    parameters.
 
     Args:
-        request (InferenceRequestContainerized):
-            messages (List[Message]): 
-                A list of chat messages in the format [{'role': 'user', 'content': 'Hello!'}, ...].
-            parameters (GenerationParameters):
-                Configuration options for text generation such as temperature, top_k, top_p, 
-                and others.
-
         container_name (str):
             The name of the Docker container running the model.
+
+        request (InferenceRequestContainerized):
+            model (Model):
+                Which model to use.
+            adapter (str | None):
+                Optional adapter/fine-tune identifier.
+            messages (List[Message]):
+                Input message sequence.
+            images (List[str] | None):
+                Optional list of base64-encoded images for multimodal models.
+                Each item must be a base64-encoded image string (no URLs or paths).
+                Ignored by text-only models.
+            parameters (GenerationParameters | None):
+                Optional generation config.
 
     Returns:
         str: The generated model response.
