@@ -16,21 +16,34 @@ dependencies = [
 
 [project.optional-dependencies]
 server = [
-  "transformers",
-  "accelerate",
-  "bitsandbytes",
-  "peft",
-  "flash-attn"
+  # The following package versions reflect the latest tested set as of 05/23/2025.
+  # Change versions if specific compatibility is required.
+  "transformers==4.50.3",
+  "torch==2.6.0+cu126",
+  "flash_attn==2.7.4.post1",
+  "accelerate==1.7.0",
+  "soundfile==0.13.1",
+  "pillow==11.0.0",
+  "scipy==1.15.2",
+  "torchvision==0.21.0+cu126",
+  "backoff==2.2.1",
+  "peft==0.15.2",
+  "bitsandbytes==0.45.5"
 ]
+
 sdk = [
-  "backoff"
+  "requests"
 ]
+
 # Optional: add extras for fine-tuning
-fine-tuning = [
+fine_tuning = [
   "trl",
   "datasets"
 ]
 
 [build-system]
-requires = ["setuptools>=61.0"]
+requires = [
+  "setuptools>=80.8.0",
+  "wheel>=0.45.1"
+]
 build-backend = "setuptools.build_meta"
