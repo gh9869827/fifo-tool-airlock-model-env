@@ -15,19 +15,19 @@ For each base model, additional LoRA adapters can be dynamically loaded, allowin
 
 ## 📚 Table of Contents
 
-- [⚠️ Security Warnings](#security-warnings)
-- [🧩 Architecture Overview](#architecture-overview)
-- [📁 Directory Structure](#directory-structure)
-- [🛠️ Prerequisites](#prerequisites)
-- [📦 Deploy the Server Package](#deploy-the-server-package)
-- [📥 Download Models (Phi-4 Only)](#download-models-phi-4-only)
-- [🔒 Isolate the Container](#isolate-the-container)
-- [⚙️ Create Configuration and Start the Server](#create-configuration-and-start-the-server)
-- [🧱 Run the Bridge on the Host](#run-the-bridge-on-the-host)
-- [🧪 Run an Example](#run-an-example)
-- [🔒 SSL & Localhost Security](#ssl--localhost-security)
-- [🎯 Goals](#goals)
-- [✅ License](#license)
+- [⚠️ Security Warnings](#%EF%B8%8F-security-warnings)
+- [🧩 Architecture Overview](#-architecture-overview)
+- [📁 Directory Structure](#-directory-structure)
+- [🛠️ Prerequisites](#%EF%B8%8F-prerequisites)
+- [📦 Deploy the Server Package](#-deploy-the-server-package)
+- [📥 Download Models (Phi-4 Only)](#-download-models-phi-4-only)
+- [🔒 Isolate the Container](#-isolate-the-container)
+- [⚙️ Create Configuration and Start the Server](#%EF%B8%8F-create-configuration-and-start-the-server)
+- [🧱 Run the Bridge on the Host](#-run-the-bridge-on-the-host)
+- [🧪 Run an Example](#-run-an-example)
+- [🔒 SSL & Localhost Security](#-ssl--localhost-security)
+- [🎯 Goals](#-goals)
+- [✅ License](#-license)
 
 ---
 
