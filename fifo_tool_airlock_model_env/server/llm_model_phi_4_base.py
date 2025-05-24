@@ -1,6 +1,8 @@
 from abc import abstractmethod
 import logging
 import threading
+from torch import Tensor
+from PIL import Image
 from transformers import GenerationConfig, PreTrainedModel, PreTrainedTokenizer
 from fifo_tool_airlock_model_env.common.models import GenerationParameters, Message
 from fifo_tool_airlock_model_env.server.llm_model import LLMModel
@@ -101,30 +103,36 @@ class LLMModelPhi4Base(LLMModel):
         return config
 
     @abstractmethod
-    def _tokenize_input(self, prompt: str):
+    def _tokenize_input(self, prompt: str, images: list[Image.Image] | None = None):
         """
-        Tokenize the given prompt string into input tensor format for the model.
+        Tokenize the given prompt string and optional images into input tensor format for the model.
 
         Args:
             prompt (str):
                 The prompt string to tokenize.
 
+            images (list[Image.Image] | None):
+                Optional list of PIL Image objects for multimodal models.
+                If None, only text will be tokenized. Ignored by text-only models.
+
         Returns:
-            dict: A dictionary of tensors suitable for input into the model.
+            dict:
+                A dictionary of tensors suitable for input into the model.
         """
         raise NotImplementedError("Subclasses must implement this method.")
 
     @abstractmethod
-    def _decode_output(self, tokens) -> str:
+    def _decode_output(self, tokens: Tensor) -> str:
         """
         Decode the generated tokens back into a human-readable string.
 
         Args:
-            tokens:
-                The token sequence output by the model.
+            tokens (Tensor):
+                The token sequence output by the model (torch.LongTensor of shape 
+                [batch_size, sequence_length]).
 
         Returns:
-            str: A string representing the decoded model response.
+            str: The decoded model response as a string.
         """
         raise NotImplementedError("Subclasses must implement this method.")
 

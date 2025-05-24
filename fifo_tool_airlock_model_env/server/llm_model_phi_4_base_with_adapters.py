@@ -1,7 +1,10 @@
 import threading
 import logging
 import time
+import base64
+import io
 from typing import Callable
+from PIL import Image
 from peft import LoraConfig, get_peft_model
 from transformers import (
     GenerationConfig,
@@ -11,6 +14,27 @@ from fifo_tool_airlock_model_env.common.models import InferenceRequestContaineri
 from fifo_tool_airlock_model_env.server.llm_model_phi_4_base import LLMModelPhi4Base
 
 logger = logging.getLogger(__name__)
+
+def decode_base64_image(b64: str) -> Image.Image:
+    """
+    Decodes a base64-encoded image string into a PIL Image object in RGB mode.
+
+    Args:
+        b64 (str):
+            The base64-encoded string representing the image.
+
+    Returns:
+        Image.Image:
+            The decoded image as a PIL Image object in RGB mode.
+
+    Raises:
+        ValueError:
+            If the input string is not a valid base64-encoded image.
+
+        IOError:
+            If the decoded bytes cannot be opened as an image.
+    """
+    return Image.open(io.BytesIO(base64.b64decode(b64))).convert("RGB")
 
 class LLMModelPhi4WithAdapters(LLMModelPhi4Base):
     """
@@ -112,9 +136,11 @@ class LLMModelPhi4WithAdapters(LLMModelPhi4Base):
         logger.info("✅ Created base adapter into model %s: %s", type(self._model), self._model_path)
 
         for name, path in self._adapter_map.items():
-            logger.info("🔧 Loading adapter '%s' into model %s: %s", name, type(self._model), self._model_path)
+            logger.info("🔧 Loading adapter '%s' into model %s: %s",
+                        name, type(self._model), self._model_path)
             self._model.load_adapter(path, adapter_name=name)
-            logger.info("✅ Adapter '%s' loaded into model %s: %s", name, type(self._model), self._model_path)
+            logger.info("✅ Adapter '%s' loaded into model %s: %s",
+                        name, type(self._model), self._model_path)
 
         self._generation_config = GenerationConfig.from_pretrained(self._model_path)
         self._model.set_adapter("base")
@@ -135,18 +161,30 @@ class LLMModelPhi4WithAdapters(LLMModelPhi4Base):
             raise RuntimeError("Model must be loaded before calling generate().")
 
         prompt = self._build_prompt(request.messages)
-        inputs = self._tokenize_input(prompt)
+        images = [decode_base64_image(img) for img in request.images] if request.images else None
+
+        inputs = self._tokenize_input(prompt, images)
         input_token_count = inputs["input_ids"].shape[1]
         config = self._prepare_generation_config(request.parameters)
 
         with self._with_semaphore(request.adapter):
             self._set_adapter(request.adapter)
             start = time.perf_counter()
-            output_ids = self._model.generate(**inputs, generation_config=config)
+            # Workaround: explicitly set num_logits_to_keep=0 to prevent TypeError.
+            # Phi-4 MM's prepare_inputs_for_generation() defaults it to None,
+            # but forward() assumes it is always an int (default 0).
+            # This mismatch can cause -None to crash generation.
+            output_ids = self._model.generate(
+                **inputs,
+                num_logits_to_keep=0,
+                generation_config=config
+            )
             duration = time.perf_counter() - start
 
         output_ids = output_ids[:, input_token_count:]
         output_token_count = output_ids.shape[1]
         response = self._decode_output(output_ids)
-        self._print_token_stats(self._model_path, request.adapter, input_token_count, output_token_count, duration)
+        self._print_token_stats(
+            self._model_path, request.adapter, input_token_count, output_token_count, duration
+        )
         return response

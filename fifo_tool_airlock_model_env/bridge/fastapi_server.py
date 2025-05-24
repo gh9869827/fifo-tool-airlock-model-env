@@ -65,7 +65,8 @@ async def generate(request: InferenceRequest):
                 model=request.model,
                 adapter=request.adapter,
                 messages=request.messages,
-                parameters=request.parameters
+                parameters=request.parameters,
+                images=request.images
             )
         )
 

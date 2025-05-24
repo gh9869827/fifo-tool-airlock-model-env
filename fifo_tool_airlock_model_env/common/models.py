@@ -110,6 +110,11 @@ class InferenceRequest(BaseModel):
         messages (list[Message]):
             Input message sequence.
 
+        images (list[str] | None):
+            Optional list of images to be used for multimodal models.
+            Each item must be a base64-encoded image string (no URLs or paths).
+            Ignored by text-only models.
+
         parameters (GenerationParameters | None):
             Optional generation config.
 
@@ -119,6 +124,7 @@ class InferenceRequest(BaseModel):
     model: Model
     adapter: str | None = None
     messages: list[Message]
+    images: list[str] | None = None
     parameters: GenerationParameters | None = GenerationParameters()
     container_name: str
 
@@ -139,10 +145,16 @@ class InferenceRequestContainerized(BaseModel):
         messages (list[Message]):
             Input messages.
 
+        images (list[str] | None):
+            Optional list of images to be used for multimodal models.
+            Each item must be a base64-encoded image string (no URLs or paths).
+            Ignored by text-only models.
+
         parameters (GenerationParameters | None):
             Optional decoding settings.
     """
     model: Model
     adapter: str | None = None
     messages: list[Message]
+    images: list[str] | None = None
     parameters: GenerationParameters | None = GenerationParameters()
