@@ -7,6 +7,7 @@ The SDK communicates with the container via `docker exec`, using `stdin` and `st
 
 This projects currently focuses on Phi4 models: they are lightweight, can be run on consumer GPU, capable for agentic deployments and currently requires `trust_remote_code=True`.
 For each base model, additional LoRA adapters can be dynamically loaded, allowing multiple variants to share a single model backbone with efficient memory usage.
+
 ---
 
 ## 🧩 Architecture Overview
