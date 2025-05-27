@@ -1,3 +1,4 @@
+import logging
 import subprocess
 from fastapi import FastAPI, Response
 import uvicorn
@@ -72,10 +73,10 @@ async def generate(request: InferenceRequest):
 
         return Response(content=output, media_type="text/plain")
 
-    except Exception as e:
-
+    except Exception:
+        logging.exception("Unhandled error in /generate endpoint")
         return Response(
-            content=str(e),
+            content="Internal server error.",
             status_code=500,
             media_type="text/plain"
         )
