@@ -1,10 +1,12 @@
 from dataclasses import dataclass, field
-from typing import Dict, Tuple, Type
+from typing import Dict, Tuple, Type, TypeAlias
 import json
 import logging
-from fifo_tool_airlock_model_env.common.models import Model
 from pydantic import BaseModel, Field
 
+from fifo_tool_airlock_model_env.common.models import (
+    Model
+)
 from fifo_tool_airlock_model_env.server.llm_model import (
     LLMModel
 )
@@ -14,6 +16,18 @@ from fifo_tool_airlock_model_env.server.llm_model_phi_4_mini_instruct import (
 from fifo_tool_airlock_model_env.server.llm_model_phi_4_multimodal_instruct import (
     LLMModelPhi4MultimodalInstruct
 )
+
+SupportedModelTypes : TypeAlias  = (
+      Type[LLMModelPhi4MiniInstruct]
+    | Type[LLMModelPhi4MultimodalInstruct]
+)
+"""
+Type alias for supported model class types.
+
+Represents any LLM model class that can be registered in the `available_classes` map inside the
+`load_from_config` method. Used to indicate the allowed types of models that can be dynamically
+loaded at runtime.
+"""
 
 class ModelConfig(BaseModel):
     """
@@ -62,7 +76,7 @@ class LoadedModels:
         _registry (Dict[Model, LLMModel]):
             Dictionary mapping model enums to loaded model instances.
     """
-    _registry: Dict[str, object] = field(default_factory=dict)
+    _registry: Dict[str, LLMModel] = field(default_factory=dict[str, LLMModel])
 
     def get_model(self, model: Model) -> LLMModel | None:
         """
@@ -93,7 +107,7 @@ class LoadedModels:
 
         config = AppConfig.model_validate(raw)
 
-        available_classes: Dict[str, Tuple[Type[LLMModel], Model]] = {
+        available_classes: Dict[str, Tuple[SupportedModelTypes, Model]] = {
             "LLMModelPhi4MiniInstruct": (
                 LLMModelPhi4MiniInstruct,
                 Model.Phi4MiniInstruct

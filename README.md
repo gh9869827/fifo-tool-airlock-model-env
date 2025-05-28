@@ -111,7 +111,6 @@ fifo_tool_airlock_model_env/
 │   ├── logging_config.py                        #   Logging configuration for Uvicorn
 │   ├── llm_model_loader.py                      #   Entrypoint to load models from config
 │   ├── llm_model.py                             #   Abstract base class for model implementations
-│   ├── llm_model_phi_4_base.py                  #   Shared core logic for Phi-4 family
 │   ├── llm_model_phi_4_base_with_adapters.py    #   Adds LoRA adapter handling to base loader
 │   ├── llm_model_phi_4_mini_instruct.py         #   Loader for Phi-4 Mini Instruct with adapter support
 │   └── llm_model_phi_4_multimodal_instruct.py   #   Loader for Phi-4 Multimodal with adapter support

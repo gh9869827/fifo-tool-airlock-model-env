@@ -23,25 +23,29 @@ from fifo_tool_airlock_model_env.sdk.client_sdk import call_airlock_model_server
 # with open("test.png", "rb") as f:
 #     b64_image = base64.b64encode(f.read()).decode("utf-8")
 
+# NOTE: Pillow's type stubs are incomplete (especially ImageDraw & ImageFont)
+#       Pylance strict mode requires `# type: ignore` on certain lines below.
+
 # or directly generate a base64-encoded test image with a square and the word "HELLO"
 def make_test_image_b64() -> str:
     img = Image.new("RGB", (640, 640), "white")
-    draw = ImageDraw.Draw(img)
-    draw.rectangle([40, 40, 600, 600], outline="black", width=4)
+    draw = ImageDraw.Draw(img) # type: ignore
+    draw.rectangle([40, 40, 600, 600], outline="black", width=4) # type: ignore
 
     try:
-        font = ImageFont.truetype("arial.ttf", 64)
+        font = ImageFont.truetype("arial.ttf", 64) # type: ignore
     except IOError:
         font = ImageFont.load_default()
 
     # Get text bounding box to center it
-    bbox = draw.textbbox((0, 0), "HELLO", font=font)
+    bbox = draw.textbbox((0, 0), "HELLO", font=font) # type: ignore
     text_w = bbox[2] - bbox[0]
     text_h = bbox[3] - bbox[1]
-    draw.text(((640 - text_w) // 2, (640 - text_h) // 2), "HELLO", fill="black", font=font)
+    text_position = ((640 - text_w) // 2, (640 - text_h) // 2)
+    draw.text(text_position, "HELLO", fill="black", font=font) # type: ignore
 
     buf = io.BytesIO()
-    img.save(buf, format="PNG")
+    img.save(buf, format="PNG") # type: ignore
     return base64.b64encode(buf.getvalue()).decode("utf-8")
 
 b64_image = make_test_image_b64()

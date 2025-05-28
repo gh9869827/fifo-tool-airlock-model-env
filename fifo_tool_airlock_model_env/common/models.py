@@ -1,5 +1,5 @@
-from pydantic import BaseModel
 from enum import Enum
+from pydantic import BaseModel, Field
 
 
 class Role(str, Enum):
@@ -115,8 +115,9 @@ class InferenceRequest(BaseModel):
             Each item must be a base64-encoded image string (no URLs or paths).
             Ignored by text-only models.
 
-        parameters (GenerationParameters | None):
-            Optional generation config.
+        parameters (GenerationParameters):
+            Optional generation config. If omitted, defaults to an empty configuration.
+            Each field inside is also optional and may be left unset.
 
         container_name (str):
             Name of the airlock container serving the model.
@@ -125,7 +126,7 @@ class InferenceRequest(BaseModel):
     adapter: str | None = None
     messages: list[Message]
     images: list[str] | None = None
-    parameters: GenerationParameters | None = GenerationParameters()
+    parameters: GenerationParameters = Field(default_factory=GenerationParameters)
     container_name: str
 
 
@@ -150,11 +151,12 @@ class InferenceRequestContainerized(BaseModel):
             Each item must be a base64-encoded image string (no URLs or paths).
             Ignored by text-only models.
 
-        parameters (GenerationParameters | None):
-            Optional decoding settings.
+        parameters (GenerationParameters):
+            Optional generation config. If omitted, defaults to an empty configuration.
+            Each field inside is also optional and may be left unset.
     """
     model: Model
     adapter: str | None = None
     messages: list[Message]
     images: list[str] | None = None
-    parameters: GenerationParameters | None = GenerationParameters()
+    parameters: GenerationParameters = Field(default_factory=GenerationParameters)
