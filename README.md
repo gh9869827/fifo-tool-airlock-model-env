@@ -265,13 +265,14 @@ MIT — see [LICENSE](LICENSE) for details.
 
 ## 📄 Disclaimer
 
-This project is not affiliated with or endorsed by Hugging Face, FastAPI, Docker, or Microsoft (Phi-4 model family).
+This project is not affiliated with or endorsed by Hugging Face, FastAPI, Docker, Microsoft (Phi-4 model family), or the Python Software Foundation.  
+It builds on their open-source technologies under their respective licenses.
 
 ---
 
 ## 📄 Attribution
 
-The [Phi-4 Multimodal Instruct model card](https://huggingface.co/microsoft/Phi-4-multimodal-instruct) published by Microsoft  
-on Hugging Face was originally used as a starting point for developing the Phi-4 model adapter support in this project.
+The usage examples of the [Phi-4 Multimodal Instruct model](https://huggingface.co/microsoft/Phi-4-multimodal-instruct) published by Microsoft 
+on Hugging Face were originally used as a starting point for developing the Phi-4 model adapter support in this project.
 
-The model code provided in that repository is published under the MIT license, which permits reuse and adaptation with attribution.
+This includes inspiration from both the model card and associated example code files, which are published under the MIT license and permit reuse and adaptation with attribution.
