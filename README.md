@@ -28,7 +28,8 @@ For each base model, additional LoRA adapters can be dynamically loaded, allowin
 - [🔒 SSL & Localhost Security](#-ssl--localhost-security)
 - [🎯 Goals](#-goals)
 - [✅ License](#-license)
-
+- [📄 Disclaimer](#-disclaimer)
+- [📄 Attribution](#-attribution)
 ---
 
 ## ⚠️ Security Warnings
@@ -259,3 +260,18 @@ If you need remote access, keep the bridge bound to `localhost` and use **SSH tu
 
 ## ✅ License
 MIT — see [LICENSE](LICENSE) for details.
+
+---
+
+## 📄 Disclaimer
+
+This project is not affiliated with or endorsed by Hugging Face, FastAPI, Docker, or Microsoft (Phi-4 model family).
+
+---
+
+## 📄 Attribution
+
+The [Phi-4 Multimodal Instruct model card](https://huggingface.co/microsoft/Phi-4-multimodal-instruct) published by Microsoft  
+on Hugging Face was originally used as a starting point for developing the Phi-4 model adapter support in this project.
+
+The model code provided in that repository is published under the MIT license, which permits reuse and adaptation with attribution.
