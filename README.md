@@ -3,7 +3,7 @@
 
 # Airlock Model Environment
 
-A more secure, fully isolated environment for running Hugging Face models that require `trust_remote_code=True`. This architecture ensures maximum containment using a no-network Docker container, communicating only through stdin/stdout with a local FastAPI bridge.
+A more secure, fully isolated environment for running Hugging Face models that require `trust_remote_code=True`. This architecture ensures maximum containment using a network-isolated Docker container (loopback only), communicating only through stdin/stdout with a local FastAPI bridge.
 
 > ⚠️ **Note**: This setup is not intended to be scalable but provide a more secure way to run models requiring `trust_remote_code=True` by restricting network access inside the container where the model runs.
 The SDK communicates with the container via `docker exec`, using `stdin` and `stdout` for transport
@@ -37,7 +37,7 @@ For each base model, additional LoRA adapters can be dynamically loaded, allowin
 This project is designed to reduce the risks of running `trust_remote_code=True` models, but it does **not** eliminate them entirely. Consider the following:
 
 - **No network isolation is absolute**  
-  While this project isolates the model in a no-network Docker container, vulnerabilities in Docker, the Linux kernel, or misconfigurations could potentially allow container escape or network access. Always keep your system and Docker runtime up to date.
+  While this project isolates the model in a network-isolated Docker container (loopback only), vulnerabilities in Docker, the Linux kernel, or misconfigurations could potentially allow container escape or network access. Always keep your system and Docker runtime up to date.
 
 - **Assumes a trusted host**  
   This setup assumes the host machine is not shared (single-user host) and is fully under your control. If the host is compromised, container isolation may be bypassed.
@@ -178,10 +178,15 @@ exit
 
 ## 🔒 Isolate the Container
 
-This must be run *outside* the container. It disconnects the container from all networks:
+This must be run *outside* the container. It disconnects the container from all external Docker networks:
 
 ```bash
+# Disconnect the container from the default Docker bridge network
 docker network disconnect bridge phi
+
+# Verify that the container is not connected to any Docker-managed networks.
+# It should output '{}'
+docker inspect -f "{{json .NetworkSettings.Networks}}" phi
 ```
 
 ---
@@ -239,7 +244,7 @@ python call_model.py
 ## 🔒 SSL & Localhost Security
 
 This project focuses on **isolating the model from the internet** to safely run potentially untrusted `trust_remote_code=True` models 
-within a no-network environment. It assumes the host is **not shared** and is fully under your control. 
+within a network-isolated environment (loopback only). It assumes the host is **not shared** and is fully under your control. 
 The system communicates exclusively over `localhost` and through `stdin`/`stdout` pipes. 
 This local-only communication is currently **not encrypted** with SSL/TLS as part of this project.
 
