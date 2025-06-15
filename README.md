@@ -277,7 +277,10 @@ It builds on their open-source technologies under their respective licenses.
 
 ## 📄 Attribution
 
-The usage examples of the [Phi-4 Multimodal Instruct model](https://huggingface.co/microsoft/Phi-4-multimodal-instruct) published by Microsoft 
-on Hugging Face were originally used as a starting point for developing the Phi-4 model adapter support in this project.
+This project includes a preserved copy of the original fine-tuning script provided by Microsoft in the [Phi-4-mini-instruct repository](https://huggingface.co/microsoft/Phi-4-mini-instruct).  
+You can find it under [`fifo_tool_airlock_model_env/fine_tuning/phi_4/phi_microsoft/sample_finetune.py`](fifo_tool_airlock_model_env/fine_tuning/phi_4/phi_microsoft/sample_finetune.py), alongside the original MIT license.  
+An adapted version of this script is provided in [`fifo_tool_airlock_model_env/fine_tuning/phi_4/fine_tune.py`](fifo_tool_airlock_model_env/fine_tuning/phi_4/fine_tune.py).
 
+The usage examples of the [Phi-4 Multimodal Instruct model](https://huggingface.co/microsoft/Phi-4-multimodal-instruct) published by Microsoft 
+on Hugging Face were originally used as a starting point for developing the Phi-4 model adapter support in this project.  
 This includes inspiration from both the model card and associated example code files, which are published under the MIT license and permit reuse and adaptation with attribution.
