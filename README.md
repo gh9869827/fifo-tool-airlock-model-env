@@ -25,6 +25,7 @@ For each base model, additional LoRA adapters can be dynamically loaded, allowin
 - [⚙️ Create Configuration and Start the Server](#%EF%B8%8F-create-configuration-and-start-the-server)
 - [🧱 Run the Bridge on the Host](#-run-the-bridge-on-the-host)
 - [🧪 Run an Example](#-run-an-example)
+- [🎯 Fine-tuning](#-fine-tuning)
 - [🔒 SSL & Localhost Security](#-ssl--localhost-security)
 - [🎯 Goals](#-goals)
 - [✅ License](#-license)
@@ -238,6 +239,48 @@ uvicorn fifo_tool_airlock_model_env.bridge.fastapi_server:app --host 127.0.0.1 -
 cd fifo_tool_airlock_model_env/examples
 python call_model.py
 ```
+
+---
+
+## 🎯 Fine-tuning
+
+This project includes support for **safe, containerized fine-tuning** of `trust_remote_code=True` models using Hugging Face's [`SFTTrainer`](https://huggingface.co/docs/trl/main/en/sft_trainer) and PEFT-based LoRA adapters.
+
+The script is based on the official [Phi-4-mini-instruct](https://huggingface.co/microsoft/Phi-4-mini-instruct) fine-tuning example, adapted for secure execution inside the airlocked container and extended to support [fifo_tool_datasets](https://github.com/gh9869827/fifo-tool-datasets) adapters.
+
+### 🔧 Available adapters
+
+You can fine-tune on any supported format via the `--adapter` flag:
+
+- `sqna` (single-turn): prompt-response pairs  
+- `conversation` (multi-turn): role-tagged chat sessions  
+- `dsl` (structured): system → input → DSL output triplets
+
+### 🚀 Run the fine-tuning script inside the container
+
+> 🛑 The script must be run **inside** the isolated container (e.g., `phi`):
+
+```bash
+docker exec -it phi /bin/bash
+cd ~/fifo-tool-airlock-model-env
+
+accelerate launch fifo_tool_airlock_model_env/fine_tuning/phi_4/fine_tune.py \
+    --adapter conversation \
+    --source .../custom-dataset \
+    --output_dir ./checkpoint_phi4_conversation \
+    --num_train_epochs 1 \
+    --batch_size 4
+```
+
+### 📄 Notes
+
+- Ensure the dataset is accessible via `datasets.load_dataset()`.
+
+  If the container is fully offline (as per this project's isolation steps), you can use `docker cp` to copy a pre-fetched Hugging Face cache directory from a machine with internet access. This allows datasets to load without requiring network access inside the container.
+
+- The fine-tuning script uses `trust_remote_code=True`, but this occurs **only within the airlocked container**.
+- Fine-tuned checkpoints are saved to the provided `--output_dir` inside the container. They can be referenced in `model_config.json` directly to be served via the model server.
+- You may adjust optimizer, LoRA config, and other hyperparameters directly in the script.
 
 ---
 
