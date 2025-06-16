@@ -217,8 +217,8 @@ def main() -> None:
     # Data Processing
     ##################
     dataset_dict = load_dataset_from_source(args.adapter, args.source)
-    train_dataset = dataset_dict["train"]
-    eval_dataset = dataset_dict["validation"]
+    train_dataset = dataset_dict["train"].shuffle(seed=42)
+    eval_dataset = dataset_dict["validation"].shuffle(seed=51)
 
     # Pylance: Type of map() is partially unknown
     processed_train_dataset = train_dataset.map(  # type: ignore[reportUnknownMemberType]
