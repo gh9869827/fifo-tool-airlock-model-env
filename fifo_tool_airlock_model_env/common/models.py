@@ -1,3 +1,4 @@
+from __future__ import annotations
 from enum import Enum
 from pydantic import BaseModel, Field
 
@@ -92,6 +93,67 @@ class Message(BaseModel):
     """
     role: Role
     content: str
+
+    @classmethod
+    def system(cls, content: str) -> Message:
+        """
+        Create a system message.
+
+        Args:
+            content (str):
+                The system prompt content, typically used to define behavior
+                or task-specific instructions for the model.
+
+        Returns:
+            Message:
+                A message with role set to `Role.system`.
+        """
+        return cls(role=Role.system, content=content)
+
+    @classmethod
+    def user(cls, content: str) -> Message:
+        """
+        Create a user message.
+
+        Args:
+            content (str):
+                The user input or question for the model.
+
+        Returns:
+            Message:
+                A message with role set to `Role.user`.
+        """
+        return cls(role=Role.user, content=content)
+
+    @classmethod
+    def assistant(cls, content: str) -> Message:
+        """
+        Create an assistant message.
+
+        Args:
+            content (str):
+                The model's response content.
+
+        Returns:
+            Message:
+                A message with role set to `Role.assistant`.
+        """
+        return cls(role=Role.assistant, content=content)
+
+    @classmethod
+    def tool(cls, content: str) -> Message:
+        """
+        Create a tool message.
+
+        Args:
+            content (str):
+                The output of a function/tool invoked by the model.
+
+        Returns:
+            Message:
+                A message with role set to `Role.tool`.
+        """
+        return cls(role=Role.tool, content=content)
 
 
 class InferenceRequest(BaseModel):
