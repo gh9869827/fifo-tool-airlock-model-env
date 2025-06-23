@@ -258,10 +258,25 @@ You can fine-tune on any supported format via the `--adapter` flag:
 
 ### 🚀 Run the fine-tuning script inside the container
 
-> 🛑 The script must be run **inside** the isolated container (e.g., `phi`):
+> 🛑 The following steps **must be run inside** the isolated container (e.g., `phi`):
+
+#### 1. Install the fine-tuning package (one-time setup)
 
 ```bash
 docker exec -it phi /bin/bash
+
+cd fifo-tool-airlock-model-env
+
+python3 -m pip install -e .[fine_tuning]
+
+exit
+```
+
+#### 2. Fine-tune a model
+
+```bash
+docker exec -it phi /bin/bash
+
 cd ~/fifo-tool-airlock-model-env
 
 accelerate launch fifo_tool_airlock_model_env/fine_tuning/phi_4/fine_tune.py \
