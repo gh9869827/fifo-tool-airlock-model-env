@@ -1,8 +1,14 @@
+import os
+
+# Ensure all Hugging Face operations run in offline mode
+# since we are in the airlock environment
+os.environ["TRANSFORMERS_OFFLINE"] = "1"
+os.environ["HF_HUB_OFFLINE"] = "1"
+
 from .logging_config import configure_logging
 
 configure_logging()
 
-import os
 from fastapi import FastAPI, Response
 import uvicorn
 # import torch
@@ -64,11 +70,6 @@ async def generate(request: InferenceRequestContainerized):
         )
 
 if __name__ == "__main__":
-
-    # Ensure all Hugging Face operations run in offline mode
-    # since we are in the airlock environment
-    os.environ["TRANSFORMERS_OFFLINE"] = "1"
-    os.environ["HF_HUB_OFFLINE"] = "1"
 
     uvicorn.run("fifo_tool_airlock_model_env.server.fastapi_server:app",
                 host="127.0.0.1",

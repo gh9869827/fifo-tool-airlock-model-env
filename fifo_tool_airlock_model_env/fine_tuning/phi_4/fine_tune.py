@@ -13,6 +13,12 @@
 
 import sys
 import os
+
+# Ensure all Hugging Face operations run in offline mode
+# since we are in the airlock environment
+os.environ["TRANSFORMERS_OFFLINE"] = "1"
+os.environ["HF_HUB_OFFLINE"] = "1"
+
 import logging
 import argparse
 from typing import Type, Any, cast
@@ -114,11 +120,6 @@ def apply_chat_template(example: dict[str, Any],
     return example
 
 def main() -> None:
-
-    # Ensure all Hugging Face operations run in offline mode
-    # since we are in the airlock environment
-    os.environ["TRANSFORMERS_OFFLINE"] = "1"
-    os.environ["HF_HUB_OFFLINE"] = "1"
 
     args = parse_args()
 
