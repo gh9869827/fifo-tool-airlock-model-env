@@ -115,9 +115,10 @@ def apply_chat_template(example: dict[str, Any],
 
 def main() -> None:
 
-    # Ensure all Hugging Face Transformers operations run in offline mode
+    # Ensure all Hugging Face operations run in offline mode
     # since we are in the airlock environment
     os.environ["TRANSFORMERS_OFFLINE"] = "1"
+    os.environ["HF_HUB_OFFLINE"] = "1"
 
     args = parse_args()
 
