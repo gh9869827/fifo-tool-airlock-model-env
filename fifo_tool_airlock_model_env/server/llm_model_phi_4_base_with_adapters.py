@@ -158,6 +158,7 @@ class LLMModelPhi4WithAdapters(LLMModel, Generic[TTokenizerOrProcessor]):
                 device_map="auto" if not use_cuda else "cuda",
                 torch_dtype="auto",
                 trust_remote_code=True,
+                local_files_only=True,
                 _attn_implementation="flash_attention_2" if use_cuda else None
             )
         )

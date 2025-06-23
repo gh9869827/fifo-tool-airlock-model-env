@@ -12,6 +12,7 @@
 # Licensed under the MIT License (see LICENSE.phi_microsoft)
 
 import sys
+import os
 import logging
 import argparse
 from typing import Type, Any, cast
@@ -113,6 +114,11 @@ def apply_chat_template(example: dict[str, Any],
     return example
 
 def main() -> None:
+
+    # Ensure all Hugging Face Transformers operations run in offline mode
+    # since we are in the airlock environment
+    os.environ["TRANSFORMERS_OFFLINE"] = "1"
+
     args = parse_args()
 
     ###################
@@ -189,6 +195,7 @@ def main() -> None:
     model_kwargs = dict(
         use_cache=False,
         trust_remote_code=True,
+        local_files_only=True,
         attn_implementation="flash_attention_2",
         torch_dtype=torch.bfloat16,
         device_map=None
@@ -203,7 +210,8 @@ def main() -> None:
     )
     # Pylance: Type of from_pretrained() is partially unknown
     tokenizer = AutoTokenizer.from_pretrained(  # type: ignore[reportUnknownMemberType]
-        checkpoint_path
+        checkpoint_path,
+        local_files_only=True
     )
     tokenizer.model_max_length = 2048
     tokenizer.pad_token = tokenizer.unk_token  # type: ignore[reportUnknownMemberType]
