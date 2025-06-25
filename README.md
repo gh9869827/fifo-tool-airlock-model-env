@@ -104,6 +104,12 @@ fifo_tool_airlock_model_env/
 ├── examples/                                    # Example scripts
 │   ├── call_model.py
 │   └── call_multimodal_model.py
+├── fine_tuning/                                 # Fine-tuning utilities for supported models
+│   └── phi_4/
+│       ├── fine_tune.py                         # Custom fine-tuning script (adapted from sample below)
+│       └── phi_microsoft/                       # Original files from Microsoft's Phi GitHub repo (kept for traceability)
+│           ├── LICENSE.phi_microsoft
+│           └── sample_finetune.py
 ├── sdk/                                         # Client SDK for interacting with bridge
 │   ├── __init__.py
 │   └── client_sdk.py
@@ -116,6 +122,7 @@ fifo_tool_airlock_model_env/
 │   ├── llm_model_phi_4_base_with_adapters.py    #   Adds LoRA adapter handling to base loader
 │   ├── llm_model_phi_4_mini_instruct.py         #   Loader for Phi-4 Mini Instruct with adapter support
 │   └── llm_model_phi_4_multimodal_instruct.py   #   Loader for Phi-4 Multimodal with adapter support
+├── .gitignore                                   # Git ignore rules
 ├── model_config.example.json                    # Config template
 ├── pyproject.toml                               # Build and dependency metadata
 ├── LICENSE                                      # MIT license
