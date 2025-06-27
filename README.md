@@ -23,7 +23,8 @@ For each base model, additional LoRA adapters can be dynamically loaded, allowin
 - [📥 Download Models (Phi-4 Only)](#-download-models-phi-4-only)
 - [🔒 Isolate the Container](#-isolate-the-container)
 - [⚙️ Create Configuration and Start the Server](#%EF%B8%8F-create-configuration-and-start-the-server)
-- [🧱 Run the Bridge on the Host](#-run-the-bridge-on-the-host)
+- [🧱 Run the Bridge](#-run-the-bridge)
+- [🔧 Run the SDK](#-run-the-sdk)
 - [🧪 Run an Example](#-run-an-example)
 - [🎯 Fine-tuning](#-fine-tuning)
 - [🔒 SSL & Localhost Security](#-ssl--localhost-security)
@@ -214,10 +215,9 @@ mv model_config.example.json model_config.json
 uvicorn fifo_tool_airlock_model_env.server.fastapi_server:app --host 127.0.0.1 --port 8000
 ```
 
-## 🧱 Run the Bridge on the Host
+## 🧱 Run the Bridge
 
-> 💡**Recommended**
->
+> 💡**Recommended**  
 > Activate a Python virtual environment before installing the bridge.  
 > This keeps your global Python environment clean and avoids dependency conflicts.
 >
@@ -239,6 +239,24 @@ python3 -m pip install -e .[bridge]
 
 uvicorn fifo_tool_airlock_model_env.bridge.fastapi_server:app --host 127.0.0.1 --port 8000
 ```
+
+---
+
+## 🔧 Run the SDK
+
+In most setups, the `sdk` runs on the **same host** as the `bridge`, since the bridge is bound to `localhost` by default for security reasons.
+
+However, it's also possible to run the `sdk` on a **different host**, such as a robot or remote client, by connecting to the bridge via SSH tunneling or port forwarding.
+
+```bash
+git clone https://github.com/gh9869827/fifo-tool-airlock-model-env.git
+
+cd fifo-tool-airlock-model-env
+
+python3 -m pip install -e .[sdk]
+```
+
+---
 
 ## 🧪 Run an example
 

@@ -10,12 +10,12 @@ readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
   "pydantic",
-  "fastapi",
-  "uvicorn"
+  "fastapi"
 ]
 
 [project.optional-dependencies]
 server = [
+  "uvicorn",
   # The following package versions reflect the latest tested set as of 05/23/2025.
   # Change versions if specific compatibility is required.
   "transformers==4.50.3",
@@ -33,6 +33,10 @@ server = [
 
 sdk = [
   "requests"
+]
+
+bridge = [
+  "uvicorn"
 ]
 
 # Optional: add extras for fine-tuning
