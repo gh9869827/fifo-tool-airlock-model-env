@@ -56,7 +56,7 @@ This project is designed to reduce the risks of running `trust_remote_code=True`
 - **No sandboxing beyond Docker**  
   This project does not use additional sandboxing tools like `seccomp`, `AppArmor`, or `gVisor`. For higher assurance, consider adding OS-level hardening.
 
-- **Review model code when possible**  
+- **Review model code**  
   Isolation helps, but it’s not a substitute for inspection. Review the code of any model you plan to run, even in a sandboxed environment.
 
 ---
@@ -74,7 +74,7 @@ This project is designed to reduce the risks of running `trust_remote_code=True`
       └────┬──────┘
            │
       ┌────▼────────────────────────────┐
-      │  Docker Container               │  ← Isolated, no network
+      │  Docker Container               │  ← Isolated, loopback only network
       │  ┌────────────────────────────┐ │
       │  │  Airlocked client          │ │  ← Receives input from docker exec via stdin
       │  └────────────────────────────┘ │     ⇅ Communicates with Airlocked Server via http requests
@@ -248,7 +248,7 @@ uvicorn fifo_tool_airlock_model_env.bridge.fastapi_server:app --host 127.0.0.1 -
 
 In most setups, the `sdk` runs on the **same host** as the `bridge`, since the bridge is bound to `localhost` by default for security reasons.
 
-However, it's also possible to run the `sdk` on a **different host**, such as a robot or remote client, by connecting to the bridge via SSH tunneling or port forwarding.
+However, it's also possible to run the `sdk` on a **different host**, such as a robot or remote client, by connecting to the bridge via SSH tunneling with port forwarding.
 
 ```bash
 git clone https://github.com/gh9869827/fifo-tool-airlock-model-env.git
@@ -271,7 +271,7 @@ python call_model.py
 
 ## 🎯 Fine-tuning
 
-This project includes support for **safe, containerized fine-tuning** of `trust_remote_code=True` models using Hugging Face's [`SFTTrainer`](https://huggingface.co/docs/trl/main/en/sft_trainer) and PEFT-based LoRA adapters.
+This project includes support for **a more secure, containerized fine-tuning** of `trust_remote_code=True` models using Hugging Face's [`SFTTrainer`](https://huggingface.co/docs/trl/main/en/sft_trainer) and PEFT-based LoRA adapters.
 
 The script is based on the official [Phi-4-mini-instruct](https://huggingface.co/microsoft/Phi-4-mini-instruct) fine-tuning example, adapted for execution inside the airlocked container and extended to support [fifo_tool_datasets](https://github.com/gh9869827/fifo-tool-datasets) adapters.
 
@@ -308,7 +308,7 @@ cd ~/fifo-tool-airlock-model-env
 
 accelerate launch fifo_tool_airlock_model_env/fine_tuning/phi_4/fine_tune.py \
     --adapter conversation \
-    --source .../custom-dataset \
+    --source path-to-custom-dataset \
     --output_dir ./checkpoint_phi4_conversation \
     --num_train_epochs 1 \
     --batch_size 4
@@ -320,7 +320,7 @@ accelerate launch fifo_tool_airlock_model_env/fine_tuning/phi_4/fine_tune.py \
 
   If the container is offline (as per this project's isolation steps), you can use `docker cp` to copy a pre-fetched Hugging Face cache directory from a machine with internet access. This allows datasets to load without requiring network access inside the container.
 
-- The fine-tuning script uses `trust_remote_code=True`, but this occurs **only within the airlocked container**.
+- The fine-tuning script uses `trust_remote_code=True`, but it runs **only within the isolated container**.
 - Fine-tuned checkpoints are saved to the provided `--output_dir` inside the container. They can be referenced in `model_config.json` directly to be served via the model server.
 - You may adjust optimizer, LoRA config, and other hyperparameters directly in the script.
 
