@@ -3,9 +3,9 @@
 
 # Airlock Model Environment
 
-A more secure, fully isolated environment for running Hugging Face models that require `trust_remote_code=True`. This architecture ensures maximum containment using a network-isolated Docker container (loopback only), communicating only through stdin/stdout with a local FastAPI bridge.
+A more secure and isolated environment for running Hugging Face models that require `trust_remote_code=True`. This architecture uses a network-isolated Docker container (loopback only), communicating only through stdin/stdout with a local FastAPI bridge.
 
-> ⚠️ **Note**: This setup is not intended to be scalable but provide a more secure way to run models requiring `trust_remote_code=True` by restricting network access inside the container where the model runs.
+> ⚠️ **Note**: This setup is not intended to be scalable but provides a more secure way to run models requiring `trust_remote_code=True` by restricting network access inside the container where the model runs.
 The SDK communicates with the container via `docker exec`, using `stdin` and `stdout` for transport
 
 This project currently focuses on Phi4 models: they are lightweight, can be run on consumer GPU, capable for agentic deployments and currently requires `trust_remote_code=True`.
@@ -187,14 +187,16 @@ exit
 
 ## 🔒 Isolate the Container
 
-This must be run *outside* the container. It disconnects the container from all external Docker networks:
+This must be run *outside* the container. Assuming a standard Docker installation, it disconnects 
+the container from the default Docker bridge network and then verifies that no other networks are
+connected:
 
 ```bash
 # Disconnect the container from the default Docker bridge network
 docker network disconnect bridge phi
 
 # Verify that the container is not connected to any Docker-managed networks.
-# It should output '{}'
+# Expected output: '{}'. If other networks appear, disconnect them as well.
 docker inspect -f "{{json .NetworkSettings.Networks}}" phi
 ```
 
@@ -271,7 +273,7 @@ python call_model.py
 
 This project includes support for **safe, containerized fine-tuning** of `trust_remote_code=True` models using Hugging Face's [`SFTTrainer`](https://huggingface.co/docs/trl/main/en/sft_trainer) and PEFT-based LoRA adapters.
 
-The script is based on the official [Phi-4-mini-instruct](https://huggingface.co/microsoft/Phi-4-mini-instruct) fine-tuning example, adapted for secure execution inside the airlocked container and extended to support [fifo_tool_datasets](https://github.com/gh9869827/fifo-tool-datasets) adapters.
+The script is based on the official [Phi-4-mini-instruct](https://huggingface.co/microsoft/Phi-4-mini-instruct) fine-tuning example, adapted for execution inside the airlocked container and extended to support [fifo_tool_datasets](https://github.com/gh9869827/fifo-tool-datasets) adapters.
 
 ### 🔧 Available adapters
 
@@ -316,7 +318,7 @@ accelerate launch fifo_tool_airlock_model_env/fine_tuning/phi_4/fine_tune.py \
 
 - Ensure the dataset is accessible via `datasets.load_dataset()`.
 
-  If the container is fully offline (as per this project's isolation steps), you can use `docker cp` to copy a pre-fetched Hugging Face cache directory from a machine with internet access. This allows datasets to load without requiring network access inside the container.
+  If the container is offline (as per this project's isolation steps), you can use `docker cp` to copy a pre-fetched Hugging Face cache directory from a machine with internet access. This allows datasets to load without requiring network access inside the container.
 
 - The fine-tuning script uses `trust_remote_code=True`, but this occurs **only within the airlocked container**.
 - Fine-tuned checkpoints are saved to the provided `--output_dir` inside the container. They can be referenced in `model_config.json` directly to be served via the model server.
@@ -326,7 +328,7 @@ accelerate launch fifo_tool_airlock_model_env/fine_tuning/phi_4/fine_tune.py \
 
 ## 🔒 SSL & Localhost Security
 
-This project focuses on **isolating the model from the internet** to safely run potentially untrusted `trust_remote_code=True` models 
+This project focuses on **isolating the model from the internet** to improve safety by running potentially untrusted `trust_remote_code=True` models 
 within a network-isolated environment (loopback only). It assumes the host is **not shared** and is fully under your control. 
 The system communicates exclusively over `localhost` and through `stdin`/`stdout` pipes. 
 This local-only communication is currently **not encrypted** with SSL/TLS as part of this project.
