@@ -15,6 +15,12 @@ For each base model, additional LoRA adapters can be dynamically loaded, allowin
 
 ## 📚 Table of Contents
 
+- [🎯 Project Status, Scope & Audience](#-project-status-scope--audience)
+  - [🧩 Core Components](#-core-components)
+  - [🛑 Key Out-of-Scope Areas](#-key-out-of-scope-areas)
+  - [🔍 Security Review Status](#-security-review-status)
+  - [🛠️ Maintenance](#%EF%B8%8F-maintenance)
+  - [⚠️ Security & Usage Disclaimer](#%EF%B8%8F-security--usage-disclaimer)
 - [⚠️ Security Warnings](#%EF%B8%8F-security-warnings)
 - [🧩 Architecture Overview](#-architecture-overview)
 - [📁 Directory Structure](#-directory-structure)
@@ -30,8 +36,66 @@ For each base model, additional LoRA adapters can be dynamically loaded, allowin
 - [🔒 SSL & Localhost Security](#-ssl--localhost-security)
 - [🎯 Goals](#-goals)
 - [✅ License](#-license)
-- [📄 Disclaimer](#-disclaimer)
+- [📄 Third-Party Disclaimer](#-third-party-disclaimer)
 - [📄 Attribution](#-attribution)
+
+---
+
+## 🎯 Project Status, Scope & Audience
+
+This project is in **early-stage development**.
+
+It provides the **components and instructions** for setting up a **local execution environment** to run models that require `trust_remote_code=True`, with additional isolation to reduce risk.
+
+It is intended for **individual users and researchers** who want to experiment with `trust_remote_code=True` models on their **local machine**, in a **more secure and isolated environment**, using **mock or non-sensitive data**.  
+Users are expected to understand the **security implications and Docker concepts** described in this README.
+
+---
+
+### 🧩 Core Components
+
+- **Local network isolation** using a network-isolated Docker container (loopback only)  
+- **`stdin`/`stdout` communication** via `docker exec`  
+- Support for **Phi-4 models** (`microsoft/Phi-4-mini-instruct`, `microsoft/Phi-4-multimodal-instruct`), and **LoRA adapters fine-tuned from these specific base models**
+
+---
+
+### 🛑 Key Out-of-Scope Areas
+
+This project focuses on local, isolated execution of `trust_remote_code=True` models.  
+
+The following are **key out-of-scope areas**, intentionally *not included* in the scope of this project. This list highlights major boundaries but is not exhaustive:
+
+- **Out-of-scope:** Scalability
+- **Out-of-scope:** Multi-user deployment
+- **Out-of-scope:** Complete security guarantees
+- **Out-of-scope:** OS-level sandboxing
+- **Out-of-scope:** Network encryption (e.g., TLS/SSL)  
+- **Out-of-scope:** Authentication features (e.g., token-based access)
+
+For detailed risk considerations, see [⚠️ Security Warnings](#️-security-warnings) and [🔒 SSL & Localhost Security](#-ssl--localhost-security).
+
+---
+
+### 🔍 Security Review Status
+
+This project is designed to reduce risk but has been **reviewed only by the author (no external review or feedback yet)**.
+
+---
+
+### 🛠️ Maintenance
+
+This project is maintained by a **solo developer** as a personal side project.  
+
+Contributions are welcome, but security reviews and updates happen on a **best-effort basis**.
+
+---
+
+### ⚠️ Security & Usage Disclaimer
+
+This project reduces the risks of running `trust_remote_code=True` models, but **no security tool can eliminate risk entirely.  
+Use at your own risk.**
+
 ---
 
 ## ⚠️ Security Warnings
@@ -85,6 +149,21 @@ This project is designed to reduce the risks of running `trust_remote_code=True`
       └─────────────────────────────────┘     Loads HF models, processes input
 ```
 
+The target environment for this system, and the configuration used during testing, are as follows:
+
+- **Host machine**:  
+  - **Windows 11** with an **NVIDIA RTX 4090 GPU**  
+  - Runs:
+    - **Docker**
+    - The **Bridge**
+    - The **Client SDK**
+
+- **Container environment**:  
+  - **Ubuntu 22.04.5 LTS**  
+  - Runs:
+    - The **Airlocked client**
+    - The **Airlocked Model Server**
+
 ---
 
 ## 📁 Directory Structure
@@ -131,6 +210,7 @@ fifo_tool_airlock_model_env/
 ```
 
 ---
+
 ## 🛠️ Prerequisites
 
 The container is assumed to have **PyTorch 2.6.0+cu126**, with matching **CUDA 12.6** and **cuDNN**, installed to support Hugging Face models with GPU acceleration.
@@ -353,7 +433,7 @@ MIT — see [LICENSE](LICENSE) for details.
 
 ---
 
-## 📄 Disclaimer
+## 📄 Third-Party Disclaimer
 
 This project is not affiliated with or endorsed by Hugging Face, FastAPI, Docker, Microsoft (Phi-4 model family), or the Python Software Foundation.  
 It builds on their open-source technologies under their respective licenses.
