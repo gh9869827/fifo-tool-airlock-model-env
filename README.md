@@ -34,7 +34,6 @@ For each base model, additional LoRA adapters can be dynamically loaded, allowin
 - [🧪 Run an Example](#-run-an-example)
 - [🎯 Fine-tuning](#-fine-tuning)
 - [🔒 SSL & Localhost Security](#-ssl--localhost-security)
-- [🎯 Goals](#-goals)
 - [✅ License](#-license)
 - [📄 Third-Party Disclaimer](#-third-party-disclaimer)
 - [📄 Attribution](#-attribution)
@@ -221,6 +220,11 @@ In the rest of the instructions, we assume the container was started using:
 docker run -it --gpus all --shm-size=2.5g --name phi image_with_pytorch_2.6_and_cuda_functional
 ```
 
+The instructions below **assume that running `docker exec -it phi /bin/bash` starts a non-root user session by default**.  
+This non-root user is used to deploy the server package, download the models, start the Uvicorn server, and run the fine-tuning Python script.
+
+When root privileges are required (e.g., for system updates), `docker exec` is called with the option `-u root`.
+
 Be sure the container is started and up to date:
 
 ```bash
@@ -370,6 +374,7 @@ You can fine-tune on any supported format via the `--adapter` flag:
 #### 1. Install the fine-tuning package (one-time setup)
 
 ```bash
+# Run this `docker exec` command from the host to enter the container
 docker exec -it phi /bin/bash
 
 cd fifo-tool-airlock-model-env
@@ -382,6 +387,7 @@ exit
 #### 2. Fine-tune a model
 
 ```bash
+# Run this `docker exec` command from the host to enter the container
 docker exec -it phi /bin/bash
 
 cd ~/fifo-tool-airlock-model-env
@@ -418,13 +424,6 @@ and encrypt the `stdin`/`stdout` channel between the client and the bridge.
 
 ⚠️ Never bind this server to a non-`localhost` interface without proper SSL/TLS configuration. 
 If you need remote access, keep the bridge bound to `localhost` and use **SSH tunneling** (`ssh -L`) for secure communication.
-
----
-
-## 🎯 Goals
-- Minimal trusted surface area
-- Clean interface between components
-- Easy to extend or audit
 
 ---
 
