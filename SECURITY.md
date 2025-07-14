@@ -10,7 +10,8 @@
 
 This project is in early development. Only the current release (`v0.1.2`) is available and supported.
 
-Versions `0.1.0` and `0.1.1` are no longer supported due to outdated documentation. The README in version `0.1.2` adds a **Project Status, Scope & Audience** section and adds in the **Architecture Overview** the target environment configuration.
+Versions `0.1.0` and `0.1.1` are no longer supported due to outdated documentation.  
+Version `0.1.2` adds a **Project Status, Scope & Audience** section, updates the **Architecture Overview** to include the target environment configuration, and clarifies default user assumptions in the **Prerequisites** section.
 
 ## Reporting a Vulnerability
 
