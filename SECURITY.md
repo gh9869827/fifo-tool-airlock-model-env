@@ -2,16 +2,15 @@
 
 ## Supported Versions
 
-| Version    | Supported          |
-|------------|--------------------|
-| 0.1.0      | ❌ No               |
-| 0.1.1      | ❌ No               |
-| 0.1.2      | ✅ Yes              |
+| Version             | Supported |
+|--------------------|-----------|
+| Latest pre-release  | ✅ Yes    |
+| Older versions      | ❌ No     |
 
-This project is in early development. Only the current release (`v0.1.2`) is available and supported.
+This project is in early development.  
+Only the **most recent pre-release** is supported.
 
-Versions `0.1.0` and `0.1.1` are no longer supported due to outdated documentation.  
-Version `0.1.2` adds a **Project Status, Scope & Audience** section, updates the **Architecture Overview** to include the target environment configuration, and clarifies default user assumptions in the **Prerequisites** section.
+See the [Pre-releases page](../../releases) for details about what has changed in each pre-release.
 
 ## Reporting a Vulnerability
 
