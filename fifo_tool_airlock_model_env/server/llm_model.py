@@ -1,5 +1,9 @@
 from abc import ABC, abstractmethod
+import logging
 from fifo_tool_airlock_model_env.common.models import InferenceRequestContainerized
+
+
+logger = logging.getLogger(__name__)
 
 class LLMModel(ABC):
     """
@@ -20,14 +24,14 @@ class LLMModel(ABC):
         """
         raise NotImplementedError
 
-    def _print_token_stats(self,
+    def _log_token_stats(self,
                            model_name: str,
                            adapter_name: str | None,
                            input_tokens: int,
                            output_tokens: int,
                            duration: float):
         """
-        Print input/output token counts and generation time duration for a given model/adapter.
+        Log input/output token counts and generation time duration for a given model/adapter.
 
         Args:
             model_name (str):
@@ -46,5 +50,5 @@ class LLMModel(ABC):
                 Time in seconds taken to generate the response.
         """
         adapter = "[base model]" if adapter_name is None else f"[{adapter_name}]"
-        print(f"📥 {input_tokens:>4} tokens in   ➜   📤 {output_tokens:>4} "
-              f"tokens out   ⏱️ {duration:.2f}s    📦 {model_name}{adapter}")
+        logger.info("📥 %4d tokens in   ➜   📤 %4d tokens out   ⏱️ %.2fs    📦 %s%s",
+                    input_tokens, output_tokens, duration, model_name, adapter)

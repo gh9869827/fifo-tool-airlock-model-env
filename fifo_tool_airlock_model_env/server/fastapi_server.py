@@ -53,11 +53,7 @@ async def generate(request: InferenceRequestContainerized):
                 content=f"Unrecognized model '{request.model}'"
             )
 
-        try:
-            output = model.generate(request)
-        except Exception as e:
-            print(e)
-            raise e
+        output = model.generate(request)
 
         return Response(content=output, media_type="text/plain")
 

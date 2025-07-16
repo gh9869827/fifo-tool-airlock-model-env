@@ -266,7 +266,7 @@ class LLMModelPhi4WithAdapters(LLMModel, Generic[TTokenizerOrProcessor]):
         output_ids = output_ids[:, input_token_count:]
         output_token_count = output_ids.shape[1]
         response = self._decode_output(output_ids)
-        self._print_token_stats(
+        self._log_token_stats(
             self._model_path, request.adapter, input_token_count, output_token_count, duration
         )
         return response
