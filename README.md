@@ -1,5 +1,14 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 ![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)
+[![Experimental](https://img.shields.io/badge/status-experimental-orange.svg)]()
+
+# ⚠️ Experimental Branch: `experimental/process_manager` ⚠️
+
+This branch contains experimental code for process and log management scripts.  
+Features may change, and this branch may be deleted at any time.  
+**Use at your own risk.**
+
+---
 
 # Airlock Model Environment
 
