@@ -1,6 +1,10 @@
 import sys
 import urllib.request
 
+# `urllib.request` is used instead of `requests.post` because it is lighter and
+# loads significantly faster. Load time matters here since `run.py` is invoked
+# for **each message** the SDK sends to the Airlocked server.
+
 try:
     # Read raw JSON input from stdin
     json_bytes = sys.stdin.read().encode("utf-8")
