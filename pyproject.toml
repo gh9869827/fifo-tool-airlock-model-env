@@ -1,6 +1,6 @@
 [project]
 name = "fifo-tool-airlock-model-env"
-version = "0.1.0"
+version = "0.1.3a0"
 description = "Isolated runtime for Hugging Face models requiring `trust_remote_code=True`, using a loopback-only Docker container and a FastAPI bridge"
 authors = [
   { name = "Florent Gastoud" }
