@@ -45,6 +45,13 @@ fine_tuning = [
   "datasets"
 ]
 
+cli = [
+  "rich"
+]
+
+[project.scripts]
+fifo-tool-airlock-start-env = "fifo_tool_airlock_model_env.cli.start_server_and_bridge:main"
+
 [build-system]
 requires = [
   "setuptools>=80.8.0",
