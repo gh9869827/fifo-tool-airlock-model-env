@@ -46,7 +46,8 @@ fine_tuning = [
 ]
 
 cli = [
-  "rich"
+  "rich",
+  "docker"
 ]
 
 [project.scripts]
