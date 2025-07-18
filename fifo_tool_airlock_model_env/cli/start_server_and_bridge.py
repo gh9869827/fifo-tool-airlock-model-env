@@ -600,6 +600,7 @@ def _check_requirements_exit_on_failure() -> Container:
     else:
         sys.exit(f"🛑 Container '{CONTAINER_NAME}' is in unexpected state '{status}'. Aborting.")
 
+    # Check if the container is attached to any Docker networks
     networks = container.attrs['NetworkSettings']['Networks']
     if networks:
         sys.exit(
@@ -607,6 +608,27 @@ def _check_requirements_exit_on_failure() -> Container:
             f"but found: {', '.join(networks.keys())}\n"
             "   Please disconnect all networks using:\n"
             f"     docker network disconnect <network> {CONTAINER_NAME}"
+        )
+
+
+    # Check default user
+    default_user = container.attrs['Config']['User']
+    if not default_user or default_user in ["0", "root"]:
+        sys.exit(
+            f"🛑 Container '{CONTAINER_NAME}': Default user is root. Aborting.\n"
+            "   Please update your container configuration."
+        )
+
+    # Check user of exec_run
+    # Pylance: Type of "exec_run" is partially unknown
+    result = container.exec_run(  # type: ignore[reportUnknownMemberType]
+        ["id", "-u"]
+    )  # user=None = default
+    uid = result.output.decode().strip()
+    if uid == "0":
+        sys.exit(
+            f"🛑 Container '{CONTAINER_NAME}': Exec runs as root. Aborting.\n"
+            "   Please update your container configuration."
         )
 
     return container
