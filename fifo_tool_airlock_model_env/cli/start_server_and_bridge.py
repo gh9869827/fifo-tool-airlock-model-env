@@ -630,6 +630,15 @@ def _check_requirements_exit_on_failure() -> Container:
     else:
         sys.exit(f"🛑 Container '{CONTAINER_NAME}' is in unexpected state '{status}'. Aborting.")
 
+    networks = container.attrs['NetworkSettings']['Networks']
+    if networks:
+        sys.exit(
+            f"🛑 Container '{CONTAINER_NAME}' should not be attached to any Docker network, "
+            f"but found: {', '.join(networks.keys())}\n"
+            "   Please disconnect all networks using:\n"
+            f"     docker network disconnect <network> {CONTAINER_NAME}"
+        )
+
     return container
 
 def main():
