@@ -364,9 +364,6 @@ class CommandDocker(Command):
         working_dir (str | None, optional):
             Working directory inside the container for the start command (default: None).
 
-        _exec_id (str, internal):
-            Docker exec instance ID (set after command start).
-
         _stream (Iterator[bytes], internal):
             Iterator over the output stream from Docker exec (set after command start).
     """
@@ -375,7 +372,6 @@ class CommandDocker(Command):
     cmd_verify_stop: list[str]
     container: Container
     working_dir: str | None = None
-    _exec_id: str = field(init=False, repr=False)
     _stream: Iterator[bytes] = field(init=False, repr=False)
 
     def _run_background_cmd(self) -> None:
@@ -383,29 +379,17 @@ class CommandDocker(Command):
         Start the background process inside the Docker container using
         Docker exec (via the Python SDK).
 
-        Initializes the exec instance and begins streaming output as bytes
-        for real-time log display. Stores the exec ID and output stream for
-        further management.
+        Initializes the exec instance and stores the output stream (as bytes)
+        for real-time log display.
         """
-        client = cast(DockerClient, self.container.client)
-        response = cast(
-            dict[str, Any],
-            # Pylance: Type of "exec_create" is partially unknown
-            client.api.exec_create(  # type: ignore[reportUnknownMemberType]
-                self.container.id,
-                self.cmd_start,
-                workdir=self.working_dir
-            )
+        # Pylance: Type of "exec_run" is partially unknown
+        result = self.container.exec_run(  # type: ignore[reportUnknownMemberType]
+            self.cmd_start,
+            workdir=self.working_dir,
+            stream=True
         )
-        self._exec_id = response["Id"]
-        self._stream = cast(
-            Iterator[bytes],
-            # Pylance: Type of "exec_start" is partially unknown
-            client.api.exec_start(  # type: ignore[reportUnknownMemberType]
-                self._exec_id,
-                stream=True
-            )
-        )
+
+        self._stream = result.output
 
     def _stream_output(self) -> None:
         """
@@ -439,36 +423,12 @@ class CommandDocker(Command):
             int:
                 Exit code of the executed command.
         """
-        client = cast(DockerClient, self.container.client)
-
-        response = cast(
-            dict[str, Any],
-            # Pylance: Type of "exec_create" is partially unknown
-            client.api.exec_create(  # type: ignore[reportUnknownMemberType]
-                self.container.id,
-                cmd
-            )
-        )
-        exec_id = response["Id"]
-
-        _output = cast(
-            bytes,
-            # Pylance: Type of "exec_start" is partially unknown
-            client.api.exec_start(  # type: ignore[reportUnknownMemberType]
-                exec_id,
-                stream=False
-            )
-        ).decode("utf-8")
-
-        exec_inspect = cast(
-            dict[str, Any],
-            # Pylance: Type of "exec_inspect" is partially unknown
-            client.api.exec_inspect(  # type: ignore[reportUnknownMemberType]
-                exec_id
-            )
+        # Pylance: Type of "exec_run" is partially unknown
+        result = self.container.exec_run(  # type: ignore[reportUnknownMemberType]
+           cmd
         )
 
-        return exec_inspect["ExitCode"]
+        return result.exit_code
 
     def _stop_background_cmd(self) -> None:
         """
