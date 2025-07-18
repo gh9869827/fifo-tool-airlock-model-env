@@ -23,6 +23,7 @@ import sys
 from collections import deque
 import re
 import shutil
+from types import FrameType
 from typing import Any, Iterator, cast
 import docker  # type: ignore[import]
 from docker.errors import NotFound, APIError  # type: ignore[import]
@@ -522,11 +523,15 @@ class UvicornProcessManager:
     def start_process(self, cmd: Command):
         """
         Launches a new process and begins streaming its logs.
+
+        Args:
+            cmd (Command):
+                The command instance representing the process to start and manage.
         """
         cmd.run_background()
         self._procs[cmd.name] = cmd
 
-    def stop_all(self):
+    def stop_all_processes(self):
         """
         Attempts to gracefully stop all managed processes and joins their log threads.
         """
@@ -546,10 +551,15 @@ class UvicornProcessManager:
         Handles shutdown on Ctrl-C. Waits for all processes and their threads
         to exit cleanly, then clears all process resources.
         """
-        signal.signal(signal.SIGINT, lambda s, f: self.stop_all())
+        def _handle_sigint(_signum: int, _frame: FrameType | None) -> None:
+            self.stop_all_processes()
+
+        signal.signal(signal.SIGINT, _handle_sigint)
 
         layout = Layout()
-        layout.split_column(*[Layout(name=name, ratio=1) for name in self._procs])
+
+        if self._procs:
+            layout.split_column(*[Layout(name=name, ratio=1) for name in self._procs])
 
         with Live(layout, refresh_per_second=10, screen=True):
             join_requested = False
